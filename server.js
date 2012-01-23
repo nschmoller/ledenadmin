@@ -20,10 +20,26 @@ function handleRequest(req, res) {
         res.end(data);
       });
     } else {
-      res.writeHead(404, {'Content-Type': 'text/html'});
-      res.end('File not found.');
+      controller(req, res);
     }
   });
+}
+
+function controller(req, res) {
+  if (req.url == '/leden') {
+    var data = {
+      members: [{
+        name: 'niek'
+      }, {
+        name: 'irene'
+      }]
+    };
+    res.writeHead(200, {'Content-Type': 'text/json'});
+    res.end(JSON.stringify(data));
+  } else {
+    res.writeHead(404, {'Content-Type': 'text/html'});
+    res.end('File not found.');
+  }
 }
 
 http.createServer(function (req, res) {
