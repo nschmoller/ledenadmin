@@ -5,7 +5,7 @@ var path = require('path');
 function handleRequest(req, res) {
   var url = req.url;
   if (url == '/') {
-    url = '/index.mustache';
+    url = '/index.html';
   }
   var filePath = '.' + url;
   path.exists(filePath, function (exists) {
