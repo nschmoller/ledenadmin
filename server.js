@@ -34,7 +34,7 @@ function controller(req, res) {
         name: 'irene'
       }]
     };
-    res.writeHead(200, {'Content-Type': 'text/json'});
+    res.writeHead(200, {'Content-Type': 'application/json'});
     res.end(JSON.stringify(data));
   } else {
     res.writeHead(404, {'Content-Type': 'text/html'});
