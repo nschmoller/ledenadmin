@@ -1,6 +1,7 @@
 var http = require('http');
 var fs = require('fs');
 var path = require('path');
+var router = require('./router');
 
 function handleRequest(req, res) {
   var url = req.url;
@@ -20,27 +21,11 @@ function handleRequest(req, res) {
         res.end(data);
       });
     } else {
-      controller(req, res);
+      router.route(req, res);
     }
   });
 }
 
-function controller(req, res) {
-  if (req.url == '/leden') {
-    var data = {
-      members: [{
-        name: 'niek'
-      }, {
-        name: 'irene'
-      }]
-    };
-    res.writeHead(200, {'Content-Type': 'application/json'});
-    res.end(JSON.stringify(data));
-  } else {
-    res.writeHead(404, {'Content-Type': 'text/html'});
-    res.end('File not found.');
-  }
-}
 
 http.createServer(function (req, res) {
   handleRequest(req, res);
