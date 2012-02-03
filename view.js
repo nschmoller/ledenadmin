@@ -26,7 +26,8 @@ $(function() {
   });
 
   window.MemberCollection = Backbone.Collection.extend({
-    model: Member
+    model: Member,
+    url: '/leden'
   });
 
   window.Members = new MemberCollection;
@@ -38,7 +39,7 @@ $(function() {
 
   window.AddMemberDialog = Backbone.View.extend({
     events: {
-      'keypress new-member-name': 'saveOnEnter'
+      'keypress #new-member-name': 'saveOnEnter'
     },
     render: function() {
       this.$el.html('<div class="add-member-dialog"><input type="text" id="new-member-name"></div>');
@@ -48,7 +49,7 @@ $(function() {
       console.info("key pressed");
       console.info(event);
       if (event.keyCode === 13) {
-        Members.create({name: $('new-member-name').val()});
+        Members.create({name: $('#new-member-name').val()});
       }
     }
   });

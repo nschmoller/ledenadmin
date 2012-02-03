@@ -1,15 +1,16 @@
 var http = require('http');
 var fs = require('fs');
-var path = require('path');
 var router = require('./router');
 
 function handleRequest(req, res) {
+  req.pause();
   var url = req.url;
   if (url == '/') {
     url = '/index.html';
   }
   var filePath = '.' + url;
-  path.exists(filePath, function (exists) {
+  fs.exists(filePath, function (exists) {
+    req.resume();
     if (exists) {
       fs.readFile(filePath, function (err, data) {
         if (err) {
