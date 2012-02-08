@@ -30,7 +30,7 @@ $(function() {
     url: '/leden'
   });
 
-  window.Members = new MemberCollection;
+  window.Members = new MemberCollection();
 
   window.MemberView = Backbone.View.extend({
     className: 'member',
@@ -67,5 +67,5 @@ $(function() {
     }
   });
 
-  window.App = new AppView;
+  window.App = new AppView();
 });
