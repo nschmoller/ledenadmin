@@ -1,12 +1,23 @@
 var pg = require('pg');
 var constring = 'tcp://node@localhost/ledenadmin';
 
+var handleError = function(err, req, res) {
+  if (err) {
+    res.writeHead(500, {'Content-Type': 'text/plain'});
+    res.end();
+  }
+};
+
+
 var route = function (req, res) {
   console.log(req.method + ": " + req.url);
   if (req.url == '/leden') {
     if (req.method == "GET") {
       var data = {};
       pg.connect(constring, function (err, client) {
+        if (err) {
+          handleError(err, res, req);
+        }
         client.query('select * from members', function (err, result) {
           data.members = result.rows;
           res.writeHead(200, {'Content-Type': 'application/json'});
@@ -14,17 +25,17 @@ var route = function (req, res) {
         });
       });
     } else if (req.method == "POST") {
-      console.log('leden post');
+      var data = "";
       req.on('data', function(chunk) {
-        console.log(chunk);
+        data += chunk;
       });
       req.on('end', function() {
-        console.log('received end');
-        res.writeHead(200, {'Content-Type': 'application/json'});
-        res.end("bla");
-      });
-      req.on('close', function() {
-        console.log('connection closed');
+        pg.connect(constring, function(err, client) {
+          var newMember = JSON.parse(data);
+          client.query("insert into members (name) values ('" + newMember.name + "')");
+          res.writeHead(200, {'Content-Type': 'application/json'});
+          res.end(JSON.stringify({status: 'ok'}));
+        });
       });
     }
   } else {
