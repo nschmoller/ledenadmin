@@ -1,5 +1,7 @@
 var http = require('http');
 var fs = require('fs');
+var mime = require('mime');
+
 var router = require('./router');
 
 function handleRequest(req, res) {
@@ -18,7 +20,7 @@ function handleRequest(req, res) {
           res.end();
         }
         console.log("200: " + url);
-        res.writeHead(200, {'Content-Type': 'text/html'});
+        res.writeHead(200, {'Content-Type': mime.lookup(filePath)});
         res.end(data);
       });
     } else {
