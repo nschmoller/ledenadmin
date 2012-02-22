@@ -1,71 +1,65 @@
-var template = null;
-var data = null;
-
-$.get("leden.mustache", function(leden_template) {
-  template = leden_template;
-  render();
+window.Member = Backbone.Model.extend({
 });
 
-$.getJSON("leden", function(leden_data) {
-  data = leden_data;
-  render();
+window.MemberList = Backbone.Collection.extend({
+  model: Member,
+  url: '/leden'
 });
 
-function render() {
-  if (template === null || data === null) {
-    return;
+window.Members = new MemberList();
+
+window.MemberView = Backbone.View.extend({
+  className: 'member',
+  model: Member,
+  tagName: 'li',
+  render: function() {
+    this.$el.text(this.model.get('name'));
+    return this;
   }
-  var ledenlijst = $.mustache(template, data);
-  $(function() {
-    $('body').append(ledenlijst);
-  });
-}
+});
+
+window.AddMemberDialog = Backbone.View.extend({
+  events: {
+    'keypress #new-member-name': 'saveOnEnter'
+  },
+  render: function() {
+    this.$el.html('<div class="add-member-dialog"><input type="text" id="new-member-name"></div>');
+    return this;
+  },
+  saveOnEnter: function(event) {
+    if (event.keyCode === 13) {
+      Members.create({name: $('#new-member-name').val()});
+      this.$el.remove();
+    }
+  }
+});
 
 $(function() {
-  window.Member = Backbone.Model.extend({
-  });
-
-  window.MemberCollection = Backbone.Collection.extend({
-    model: Member,
-    url: '/leden'
-  });
-
-  window.Members = new MemberCollection();
-
-  window.MemberView = Backbone.View.extend({
-    className: 'member',
-    model: Member
-  });
-
-  window.AddMemberDialog = Backbone.View.extend({
-    events: {
-      'keypress #new-member-name': 'saveOnEnter'
-    },
-    render: function() {
-      this.$el.html('<div class="add-member-dialog"><input type="text" id="new-member-name"></div>');
-      return this;
-    },
-    saveOnEnter: function(event) {
-      console.info("key pressed");
-      console.info(event);
-      if (event.keyCode === 13) {
-        Members.create({name: $('#new-member-name').val()});
-      }
-    }
-  });
-
   window.AppView = Backbone.View.extend({
     el: $('body'),
     events: {
       'click #new_leden': 'addMemberDialog'
     },
+    initialize: function() {
+      Members.bind('add', this.addMember, this);
+      Members.bind('reset', this.addMembers, this);
+    },
+    addMember: function(member) {
+      var view = new MemberView({model: member});
+      $('#members').append(view.render().el);
+    },
+    addMembers: function() {
+      Members.each(this.addMember);
+    },
     addMemberDialog: function(event) {
-      console.info('hier');
+      console.log('clicked add member');
       event.preventDefault();
       var view = new AddMemberDialog();
       $('body').append(view.render().el);
     }
   });
 
-  window.App = new AppView();
+  window.App = new AppView;
+  console.log(App.el);
+  Members.fetch();
 });

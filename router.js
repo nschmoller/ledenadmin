@@ -21,7 +21,7 @@ var route = function (req, res) {
           return;
         }
         client.query('select * from members', function (err, result) {
-          data.members = result.rows;
+          data = result.rows;
           res.writeHead(200, {'Content-Type': 'application/json'});
           res.end(JSON.stringify(data));
         });
